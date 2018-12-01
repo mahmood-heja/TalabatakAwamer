@@ -98,6 +98,10 @@
             android:textColor="@color/gray"
             android:textSize="12sp" />
 
+
+
+
+
         <ImageButton
             android:id="@+id/option_btn"
             android:layout_width="60dp"
