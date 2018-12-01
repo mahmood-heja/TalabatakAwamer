@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CartActivity.CartActivity"
+    tools:ignore="HardcodedText">
+
+    <!-- Toolbar -->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/main_toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/urw_geometric_arabic_bold"
+            android:gravity="center"
+            android:text="سلتي "
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/totalPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:fontFamily="@font/urw_geometric_arabic_bold"
+        android:gravity="center"
+        android:padding="4dp"
+        android:text="قيمة الفاتورة  : "
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:fontFamily="@font/urw_geometric_arabic_bold"
+        android:gravity="center"
+        android:padding="2dp"
+        android:text="يضاف دينار واحد قيمة التوصيل إلى كافة مناطق محافظة إربد"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/totalPrice"
+        tools:ignore="HardcodedText" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/cartRecycle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/request_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/note" />
+
+    <Button
+        android:id="@+id/request_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_shape_shoping"
+        android:fontFamily="@font/urw_geometric_arabic_bold"
+        android:text="إطلب ألان"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:onClick="request_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

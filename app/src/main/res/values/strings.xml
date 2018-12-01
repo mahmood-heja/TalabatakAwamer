@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">طلباتك أوامر</string>
+
+    <!--cart sharedPreferences String -->
+    <string name="cart_sharePrefrance">cart</string>
+    <string name="numProductInsideCart">number of Product Inside Cart</string>
+    <!--final bill sharedPreferences String -->
+    <string name="notificationPreference">notification Data Preference</string>
+    <string name="token">token</string>
+    <string name="lastFinalBill">last Final Bill </string>
+    <string name="orderId">orderId</string>
+    <string name="phoneNumber">phoneNumber</string>
+    <string name="showRating">must Show Rating Dialog</string>
+
+    <array name="gram_spinner">
+        <item>ربع كيلو</item>
+        <item>نصف كيلو</item>
+        <item>كيلو</item>
+        <item>كيلو ونصف</item>
+        <item>كيلو 2</item>
+    </array>
+</resources>

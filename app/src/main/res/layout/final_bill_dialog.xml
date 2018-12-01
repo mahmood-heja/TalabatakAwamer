@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@color/colorPrimary"
+        android:fontFamily="@font/urw_geometric_arabic_bold"
+        android:gravity="center"
+        android:padding="4dp"
+        android:text="الفاتورة النهائية لأخر طلب لديك"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/totalPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:fontFamily="@font/urw_geometric_arabic_bold"
+        android:gravity="center"
+        android:padding="4dp"
+        android:text="المجموع الكلي : 0.0 دينار"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:fontFamily="@font/urw_geometric_arabic_bold"
+        android:gravity="center"
+        android:text="*شامل سعر التوصيل"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/bill_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+
+    <TextView
+        android:id="@+id/noBill_tv"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:fontFamily="@font/urw_geometric_arabic_bold"
+        android:gravity="center"
+        android:text="لا يوجد فواتير متاحة لديك حاليا "
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/ProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="28dp" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray" />
+
+    <Button
+        android:id="@+id/done_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_shape_shoping"
+        android:fontFamily="@font/urw_geometric_arabic_bold"
+        android:text="تم"
+        android:textColor="@color/white" />
+
+</LinearLayout>

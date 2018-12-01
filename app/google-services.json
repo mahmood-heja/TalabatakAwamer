@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "195491875601",
+    "firebase_url": "https://talabatakawamer-12893.firebaseio.com",
+    "project_id": "talabatakawamer-12893",
+    "storage_bucket": "talabatakawamer-12893.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195491875601:android:d6b8ea5241a4e88e",
+        "android_client_info": {
+          "package_name": "com.example.mahmoud_0787676704.talabatakadmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195491875601-hd9dnjkg2hei7edf11s20jjpng2dc7hg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mahmoud_0787676704.talabatakadmin",
+            "certificate_hash": "2ae8ed0d19d79438de2c23033aada8d2c5136200"
+          }
+        },
+        {
+          "client_id": "195491875601-oa9piolh9t2ur68o2gcimusrrj2vvv7b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNj5rWpc8K0Dsy1pfunkXTRL6XkQu3-iw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195491875601-oa9piolh9t2ur68o2gcimusrrj2vvv7b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195491875601:android:27861fc919f6bd86",
+        "android_client_info": {
+          "package_name": "com.talabatakawamer.talabatakawamer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195491875601-ad8tislfh5mq1mj00rnhg3nccd35lrba.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.talabatakawamer.talabatakawamer",
+            "certificate_hash": "2ae8ed0d19d79438de2c23033aada8d2c5136200"
+          }
+        },
+        {
+          "client_id": "195491875601-oa9piolh9t2ur68o2gcimusrrj2vvv7b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNj5rWpc8K0Dsy1pfunkXTRL6XkQu3-iw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195491875601-oa9piolh9t2ur68o2gcimusrrj2vvv7b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

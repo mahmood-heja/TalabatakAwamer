@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".VegetablesSection.VegetablesActivity"
+    tools:ignore="ContentDescription,RtlHardcoded,HardcodedText">
+
+    <FrameLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="أوامر"
+                android:gravity="center|right"
+                android:textColor="@color/white"
+                android:fontFamily="@font/urw_geometric_arabic_bold"
+                android:textSize="24sp"/>
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:layout_width="?android:attr/actionBarSize"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_launcher_foreground"
+                app:civ_border_color="#EEEEEE"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                app:civ_border_width="1dp"
+                app:civ_shadow="true"
+                app:civ_shadow_color="#9bd953"
+                app:civ_shadow_radius="5" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="طلباتك"
+                android:gravity="center|left"
+                android:textColor="@color/white"
+                android:fontFamily="@font/urw_geometric_arabic_bold"
+                android:textSize="24sp"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/shopping_cart"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="left|center_vertical"
+            android:padding="6dp"
+            android:src="@drawable/ic_shopping_cart" />
+
+
+
+        <ImageView
+            android:id="@+id/call"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right|center_vertical"
+            android:padding="6dp"
+            android:src="@drawable/ic_call"
+            tools:ignore="ContentDescription" />
+
+
+    </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/vegetablesRecycle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBar" />
+
+    <!-- no Internet conn. note view -->
+    <ImageView
+        android:id="@+id/noConn_iv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="center"
+        android:src="@drawable/no_conn"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBar"
+        />
+    <TextView
+        android:id="@+id/noConn_tv"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="180dp"
+        android:fontFamily="@font/urw_geometric_arabic_bold"
+        android:text="لا يوجد إتصال!  حاول مرة إخرى"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/noConn_iv"
+        app:layout_constraintEnd_toEndOf="@id/noConn_iv"
+        app:layout_constraintStart_toStartOf="@id/noConn_iv"
+        app:layout_constraintTop_toTopOf="@id/noConn_iv" />
+
+
+</android.support.constraint.ConstraintLayout>

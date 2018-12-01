@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="140dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    app:cardCornerRadius="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    tools:ignore="RtlHardcoded,HardcodedText">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/product_image"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            android:background="@color/grayTransparent"
+            tools:ignore="ContentDescription" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="75dp"
+            android:layout_height="80dp"
+            android:gravity="right"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/product_image"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/radio_super"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:fontFamily="@font/urw_geometric_arabic_bold"
+                android:padding="4dp"
+                android:gravity="center_vertical"
+                android:text="صنف سوبر"
+                android:textSize="12sp" />
+
+            <RadioButton
+                android:id="@+id/radio_first"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:fontFamily="@font/urw_geometric_arabic_bold"
+                android:padding="4dp"
+                android:text="صنف اول"
+                android:textSize="12sp" />
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="75dp"
+            android:layout_height="80dp"
+            android:layout_above="@id/line1"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/product_image"
+            android:layout_toLeftOf="@id/radioGroup"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/priceSuper"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:lines="1"
+                android:fontFamily="@font/urw_geometric_arabic_bold"
+                android:gravity="center"
+                android:text="999 قرش"
+                android:textSize="13sp"/>
+
+
+            <TextView
+                android:id="@+id/priceFirst"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:lines="1"
+                android:fontFamily="@font/urw_geometric_arabic_bold"
+                android:gravity="center"
+                android:text="999 قرش"
+                android:textSize="13sp"/>
+
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/line1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/radioGroup"
+            android:background="@color/colorAccent" />
+
+        <!-- this show when quantity type be kg or number-->
+        <LinearLayout
+            android:id="@+id/layoutQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/line1"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/plus1"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@color/colorPrimary"
+                android:src="@drawable/ic_add"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/quantity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:fontFamily="@font/urw_geometric_arabic_bold"
+                android:gravity="center"
+                android:text="0 kg"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <ImageButton
+                android:id="@+id/neg1"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@color/colorPrimary"
+                android:src="@drawable/ic_minus"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/line2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/layoutQuantity"
+            android:background="@color/colorAccent" />
+
+        <TextView
+            android:id="@+id/nameProduct"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/line2"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:fontFamily="@font/urw_geometric_arabic_bold"
+            android:gravity="center"
+            android:lines="1"
+            android:padding="6dp"
+            android:text="إسم المنتج"
+            android:textColor="@color/black"
+            android:textSize="13sp" />
+
+
+        <Button
+            android:id="@+id/addToCart"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:text="أضف إلى السلة"
+            android:textColor="@color/white"
+            android:fontFamily="@font/urw_geometric_arabic_bold"
+            android:layout_below="@id/nameProduct"
+            android:background="@drawable/button_shape_shoping"
+            android:padding="4dp"
+            android:drawableEnd="@drawable/ic_add_shopping"
+            tools:ignore="ContentDescription" />
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>
