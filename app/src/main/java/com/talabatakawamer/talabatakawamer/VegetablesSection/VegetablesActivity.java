@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -19,11 +20,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+import com.race604.drawable.wave.WaveDrawable;
 import com.talabatakawamer.talabatakawamer.CartActivity.CartActivity;
 import com.talabatakawamer.talabatakawamer.R;
 import com.talabatakawamer.talabatakawamer.postOnPhp.NameValuePair;
@@ -53,22 +59,44 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
     private ImageView noConn_iv;
     private TextView noConn_tv;
     private BroadcastReceiver mMessageReceiver;
-    private KProgressHUD progress;
     private AdapterRecycleVegetables adapter;
+    private WaveDrawable mWaveDrawable;
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        LocalBroadcastManager.getInstance(this).registerReceiver((mMessageReceiver), new IntentFilter("ShowRating"));
-        checkIfMarketAvailable();
+    private void setSplashLayout(boolean show) {
+
+        FrameLayout splashLayout=findViewById(R.id.splashLayout);
+        ImageView imageSplash=findViewById(R.id.imageSplash);
+
+        if (show) {
+            mWaveDrawable = new WaveDrawable(getResources().getDrawable(R.drawable.logo));
+            mWaveDrawable.setIndeterminate(true);
+            mWaveDrawable.setWaveSpeed(10);
+            mWaveDrawable.setLevel(1000);
+            mWaveDrawable.start();
+            splashLayout.setVisibility(View.VISIBLE);
+            imageSplash.setImageDrawable(mWaveDrawable);
+        } else {
+
+            if(splashLayout.getVisibility()==View.VISIBLE)
+            YoYo.with(Techniques.SlideOutDown).delay(1000).onEnd(animator -> {
+                mWaveDrawable.stop();
+                imageSplash.setVisibility(View.GONE);
+                splashLayout.setVisibility(View.GONE);
+            }).playOn(splashLayout);
+
+
+        }
+
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vegetables);
+
+        //show Splash layout and hidden it after product loading
+        setSplashLayout(true);
 
         checkFirstLaunched();
         // show rating dialog if data is received after order delivered
@@ -145,6 +173,15 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver((mMessageReceiver), new IntentFilter("ShowRating"));
+        checkIfMarketAvailable();
+
+    }
+
     private void showCallDialog() {
 
         // don't show dialog if Permission don't generated yet
@@ -169,13 +206,6 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
     private void loadProduct() {
         noConn_iv.setVisibility(View.GONE);
         noConn_tv.setVisibility(View.GONE);
-
-        progress = KProgressHUD.create(this)
-                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setCancellable(false)
-                .setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark))
-                .setAnimationSpeed(2)
-                .setDimAmount(0.5f).show();
 
 
         List<NameValuePair> pairs = new ArrayList<>();
@@ -216,8 +246,8 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
                     vegetablesRecycler.swapAdapter(adapter, false);
 
                     checkIfMarketAvailable();
+                    return;
                 }
-                return;
 
             } else {
                 Toast.makeText(VegetablesActivity.this, "حدث خطأ اثناء التحميل, تحقق من اتصالك من الانترنت وحاول مرة إخرى", Toast.LENGTH_LONG).show();
@@ -226,9 +256,10 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
                 noConn_iv.setVisibility(View.VISIBLE);
 
                 noConn_iv.setOnClickListener(v -> loadProduct());
-            }
 
-            progress.dismiss();
+                // hidden splashLayout after 0.5 second after end loaded
+                setSplashLayout(false);
+            }
 
         });
 
@@ -271,8 +302,8 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
                 noConn_iv.setOnClickListener(v -> loadProduct());
             }
 
-            if (progress.isShowing())
-                progress.dismiss();
+
+            setSplashLayout(false);
         });
 
     }
@@ -352,20 +383,11 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
             }
 
 
-            // show waring dialog for first time
-            new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
-                    .setTitle("ملاحظة")
-                    .setIcon(getResources().getDrawable(android.R.drawable.ic_menu_info_details))
-                    .setMessage("الطلبات تصل في اليوم التالي من وقت ارسال الطلب ")
-                    .setPositiveButton("حسنا", null)
-                    .create().show();
-
             // Number Of Notification not open yet
             editor.putInt("NumberOfNotification", 0);
             editor.putInt("NotificationID", 0);
 
             editor.putBoolean("isFirst", false);
-
 
         }
 
@@ -425,8 +447,6 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
         // to stop show rating dialog when app launched
         preferences.edit().putBoolean(getString(R.string.showRating), false).apply();
 
-        progress.show();
-
         int orderId = preferences.getInt(getString(R.string.orderId), 0);
         String phone = preferences.getString(getString(R.string.phoneNumber), "0");
 
@@ -458,8 +478,6 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
                 Toast.makeText(VegetablesActivity.this, "حدث خطأ اثناء محاولة الارسال, تحقق من اتصالك من الانترنت وحاول مرة إخرى", Toast.LENGTH_LONG).show();
 
 
-            progress.dismiss();
-
         });
 
 
@@ -479,7 +497,7 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
 
         phpTask.execute("http://talabatakawamer.com/TalabatakAwamerApp/sendNotify/sentNotfiy.php");
 
-        phpTask.onPhpTaskFinished(result -> progress.dismiss());
+        phpTask.onPhpTaskFinished(result -> Log.d("notifyAdmin", "send done"));
     }
 
     @Override

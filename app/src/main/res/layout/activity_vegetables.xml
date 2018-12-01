@@ -114,5 +114,20 @@
         app:layout_constraintStart_toStartOf="@id/noConn_iv"
         app:layout_constraintTop_toTopOf="@id/noConn_iv" />
 
+    <FrameLayout
+        android:id="@+id/splashLayout"
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimaryDark"
+        android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageSplash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        android:src="@drawable/logo"/>
+
+    </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>
