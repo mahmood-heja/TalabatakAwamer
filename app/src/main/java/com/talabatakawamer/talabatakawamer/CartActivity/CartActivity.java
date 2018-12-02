@@ -43,6 +43,9 @@ public class CartActivity extends AppCompatActivity {
     // to access from adapter
     public TextView totalPrice_tv;
     public double totalPrice;
+
+    private TextView packagingPrice_tv;
+    public double packagingPrice;
     // to start activity when back if item deleted from cart
     public boolean cartIsEdited = false;
 
@@ -65,6 +68,7 @@ public class CartActivity extends AppCompatActivity {
 
 
         totalPrice_tv = findViewById(R.id.totalPrice);
+        packagingPrice_tv = findViewById(R.id.packagingPrice);
 
         RecyclerView cartRecycler = findViewById(R.id.cartRecycle);
         cartRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -75,7 +79,7 @@ public class CartActivity extends AppCompatActivity {
 
         List<CartItem> cartItems = new ArrayList<>();
         totalPrice = 0;
-
+        packagingPrice = 0;
         for (int i = 0; i < num; i++) {
 
             VegetableItem vegetableItem = new Gson().fromJson(preferences.getString("product_" + i, ""), VegetableItem.class);
@@ -83,10 +87,14 @@ public class CartActivity extends AppCompatActivity {
             double pricePetUnit = preferences.getFloat("pricePerUnit_" + i, 0);
             String type = preferences.getString("type_" + i, "");
             double quantity = preferences.getFloat("quantity_" + i, 0);
+            boolean isPackaging = preferences.getBoolean("packaging_" + i, false);
 
             totalPrice += price;
+            if (isPackaging)
+                packagingPrice += 0.15 * quantity;
+
             // save price in JD
-            CartItem cartItem = new CartItem(vegetableItem, price / 100.0, pricePetUnit, quantity, type);
+            CartItem cartItem = new CartItem(vegetableItem, price / 100.0, pricePetUnit, quantity, type, isPackaging);
 
             cartItems.add(cartItem);
         }
@@ -97,6 +105,7 @@ public class CartActivity extends AppCompatActivity {
         // rotate total price to first 3 digit in EN Number
         DecimalFormat df = new DecimalFormat("#.###", DecimalFormatSymbols.getInstance(new Locale("en", "US")));
         totalPrice_tv.setText("المجموع : " + df.format(totalPrice / 100.0) + " دينار ");
+        packagingPrice_tv.setText("قيمة التغليف : " + df.format(packagingPrice) + " دينار ");
 
         cartRecycler.setAdapter(adapter);
 
@@ -107,17 +116,19 @@ public class CartActivity extends AppCompatActivity {
             dialog.show();
         }
 
+
     }
 
     public void request_btn(View view) {
 
         DecimalFormat df = new DecimalFormat("#.###");
-
+        //total = total of packaging + total of product in JD + 1.0 JD for deliver
+        double total = (totalPrice / 100.0) + packagingPrice + 1;
         if (totalPrice != 0) {
             new LovelyTextInputDialog(this)
                     .setTopColorRes(R.color.colorAccent)
                     // 1.0 JD price of deliver
-                    .setTitle("المجموع الكلي :" + df.format(totalPrice / 100.0 + 1.0) + " دينار ")
+                    .setTitle("المجموع الكلي :" + df.format(total) + " دينار ")
                     .setMessage("أدخل رقم هاتفك من اجل التواصل")
                     .setIcon(R.drawable.ic_shooping_smartphone)
                     // return text.length() == 10
@@ -145,6 +156,9 @@ public class CartActivity extends AppCompatActivity {
         // get token for this device
         String token = getSharedPreferences(getString(R.string.notificationPreference), MODE_PRIVATE).getString(getString(R.string.token), "");
 
+        //total = total of packaging + total of product in JD + 1.0 JD for deliver
+        double total = (totalPrice / 100.0) + packagingPrice + 1;
+
         List<NameValuePair> pairs = new ArrayList<>();
 
         pairs.add(new NameValuePair("phone_info", phone_num));
@@ -153,7 +167,7 @@ public class CartActivity extends AppCompatActivity {
         // rotate price to first 3 digit in EN Number
         DecimalFormat df = new DecimalFormat("#.###", DecimalFormatSymbols.getInstance(new Locale("en", "US")));
 
-        pairs.add(new NameValuePair("total_price", df.format(totalPrice / 100 + 1.0)));
+        pairs.add(new NameValuePair("total_price", df.format(total)));
         pairs.add(new NameValuePair("token", token));
 
         PhpTask phpTask = new PhpTask(pairs);
@@ -222,6 +236,7 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private JSONArray buildJsonBill() {
+        // this initial bill ... final bill well send from admin
         JSONArray jsonArray = new JSONArray();
 
         List<CartItem> items = adapter.getItems();
@@ -233,7 +248,6 @@ public class CartActivity extends AppCompatActivity {
 
             try {
                 itemObject.put("id", item.vegetableItem.id);
-                // this initial bill ... final bill well send from admin
                 itemObject.put("quantityType", item.vegetableItem.quantityType);
 
                 itemObject.put("name", item.vegetableItem.name);
@@ -244,6 +258,9 @@ public class CartActivity extends AppCompatActivity {
                 itemObject.put("image", item.vegetableItem.imageUrl);
                 // سعر المنتج لكل كيلو او لكل وحدة بالقرش
                 itemObject.put("pricePerUnit", item.pricePerUnit);
+                //Packaging of product states
+                // if true the price of packaging is added to total price and not to price of product
+                itemObject.put("isPackaging",item.isPackaging);
 
 
                 jsonArray.put(itemObject);
@@ -258,18 +275,31 @@ public class CartActivity extends AppCompatActivity {
     }
 
     @SuppressLint("SetTextI18n")
+    // updated with total packaging price
     public void updateTotalPrice(List<CartItem> items) {
 
         int len = items.size();
-        double newTotalPrice = 0;
+        double newTotalPrice = 0, newPackgingPrice = 0;
         for (int i = 0; i < len; i++) {
             newTotalPrice += items.get(i).price;
+            if (items.get(i).isPackaging)
+                newPackgingPrice += items.get(i).quantity * 0.15;
         }
 
         DecimalFormat df = new DecimalFormat("#.###");
         totalPrice_tv.setText("المجموع : " + df.format(newTotalPrice) + " دينار ");
+        packagingPrice_tv.setText("قيمة التغليف : " + df.format(newPackgingPrice) + " دينار ");
 
+
+        packagingPrice = newPackgingPrice;
         totalPrice = newTotalPrice * 100;
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void updatePackagingPrice(double incrementValue) {
+        DecimalFormat df = new DecimalFormat("#.###");
+        packagingPrice += incrementValue;
+        packagingPrice_tv.setText("قيمة التغليف : " + df.format(packagingPrice) + " دينار ");
     }
 
     @Override

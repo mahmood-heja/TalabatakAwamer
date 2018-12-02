@@ -4,6 +4,8 @@ package com.talabatakawamer.talabatakawamer.CartActivity;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,6 +44,7 @@ public class FinalBillDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         setContentView(R.layout.final_bill_dialog);
 
         // get  last final by Order ID
@@ -113,8 +116,9 @@ public class FinalBillDialog extends Dialog {
 
                 double price = object.getDouble("price");
 
+                // isPackaging value is not required here
                 CartItem cartItem = new CartItem(item, price, 0,
-                        object.getDouble("quantity"), object.getString("type"));
+                        object.getDouble("quantity"), object.getString("type"),false);
 
                 items.add(cartItem);
             }

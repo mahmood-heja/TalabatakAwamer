@@ -55,7 +55,7 @@ public class AdapterCartRecycle extends RecyclerView.Adapter<AdapterCartRecycle.
         holder.type_tv.setText(item.type);
 
         // rotate price to first 3 digit in EN Number
-        DecimalFormat df = new DecimalFormat("#.###", DecimalFormatSymbols.getInstance(new Locale("en","US")));
+        DecimalFormat df = new DecimalFormat("#.###", DecimalFormatSymbols.getInstance(new Locale("en", "US")));
 
         holder.price_tv.setText(df.format(item.price) + " دينار ");
 
@@ -70,24 +70,53 @@ public class AdapterCartRecycle extends RecyclerView.Adapter<AdapterCartRecycle.
 
                 popup.setOnMenuItemClickListener(item1 -> {
 
-                    if(item1.getItemId()==R.id.edit_menu) {
-                        EditProductDialog dialog=new EditProductDialog(context,item,position,this);
+                    if (item1.getItemId() == R.id.edit_menu) {
+                        EditProductDialog dialog = new EditProductDialog(context, item, position, this);
                         dialog.show();
 
-                    }else if(item1.getItemId()==R.id.delete_menu)
-                        showDeleteDialog(item.vegetableItem.id, position, item.price);
+                    } else if (item1.getItemId() == R.id.delete_menu)
+                        showDeleteDialog(item.vegetableItem.id, position);
 
 
                     return false;
                 });
             });
-        else
+        else {
             holder.option_btn.setVisibility(View.GONE);
+            holder.packaging_tv.setVisibility(View.GONE);
+        }
+
+        if (item.isPackaging) {
+            holder.packaging_tv.setText("إلغاء التغليف");
+            holder.packaging_tv.setTextColor(context.getResources().getColor(R.color.colorAccent));
+
+        } else {
+            holder.packaging_tv.setText("تغليف");
+            holder.packaging_tv.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+        }
+
+        holder.packaging_tv.setOnClickListener(v -> {
+            if (!item.isPackaging) {
+                holder.packaging_tv.setText("إلغاء التغليف");
+                holder.packaging_tv.setTextColor(context.getResources().getColor(R.color.colorAccent));
+                context.updatePackagingPrice(item.quantity * 0.15);
+            } else {
+                holder.packaging_tv.setText("تغليف");
+                holder.packaging_tv.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+                context.updatePackagingPrice(-item.quantity * 0.15);
+
+            }
+
+            //update value of item
+            context.getSharedPreferences(context.getString(R.string.cart_sharePrefrance),MODE_PRIVATE).edit().putBoolean("packaging_" + position,!item.isPackaging).apply();
+            item.isPackaging = !item.isPackaging;
+
+        });
 
     }
 
     @SuppressLint("SetTextI18n")
-    private void showDeleteDialog(int id, int position, double price) {
+    private void showDeleteDialog(int id, int position) {
 
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context)
@@ -112,13 +141,15 @@ public class AdapterCartRecycle extends RecyclerView.Adapter<AdapterCartRecycle.
                         double price_ = preferences.getFloat("price_" + (i + 1), 0);
                         String type_ = preferences.getString("type_" + (i + 1), "");
                         float quantity_ = preferences.getFloat("quantity_" + (i + 1), 0);
+                        boolean isPackaging_=preferences.getBoolean("packaging_" + (i + 1),false);
+
 
                         //save product  (position +1) in right position
                         editor.putString("product_" + i, product_);
                         editor.putFloat("price_" + i, (float) price_);
                         editor.putString("type_" + i, type_);
                         editor.putFloat("quantity_" + i, quantity_);
-
+                        editor.putBoolean("packaging_" + i,isPackaging_);
 
                     }
 
@@ -127,6 +158,7 @@ public class AdapterCartRecycle extends RecyclerView.Adapter<AdapterCartRecycle.
                     editor.remove("price_" + (number - 1));
                     editor.remove("type_" + (number - 1));
                     editor.remove("quantity_" + (number - 1));
+                    editor.remove("packaging_" + (number - 1));
                     //delete  id  item is add to card in recycle
                     editor.remove(id + "_inCard");
 
@@ -134,14 +166,12 @@ public class AdapterCartRecycle extends RecyclerView.Adapter<AdapterCartRecycle.
 
                     editor.apply();
 
-                    // edit total price in activity
-                    DecimalFormat df = new DecimalFormat("#.###");
-                    context.totalPrice = context.totalPrice - price*100;
-                    context.totalPrice_tv.setText("المجموع الكلي: " + df.format(context.totalPrice / 100.0) + " دينار ");
-                    context.cartIsEdited = true;
 
                     cartItems.remove(position);
                     notifyDataSetChanged();
+                    context.cartIsEdited = true;
+
+                    context.updateTotalPrice(cartItems);
 
 
                 })
@@ -162,7 +192,7 @@ public class AdapterCartRecycle extends RecyclerView.Adapter<AdapterCartRecycle.
 
         public ImageView product_iv;
         // type == الصنف
-        public TextView name_tv, price_tv, type_tv, quantity_tv;
+        public TextView name_tv, price_tv, type_tv, quantity_tv, packaging_tv;
         //delete item from cart
         public ImageButton option_btn;
 
@@ -176,6 +206,7 @@ public class AdapterCartRecycle extends RecyclerView.Adapter<AdapterCartRecycle.
             quantity_tv = itemView.findViewById(R.id.quantity);
             name_tv = itemView.findViewById(R.id.nameProduct);
             option_btn = itemView.findViewById(R.id.option_btn);
+            packaging_tv = itemView.findViewById(R.id.packaging);
         }
     }
 
@@ -187,15 +218,15 @@ public class AdapterCartRecycle extends RecyclerView.Adapter<AdapterCartRecycle.
         return new ViewHolder(view);
     }
 
-    public void updateCartItem(CartItem item,int pos){
-        cartItems.set(pos,item);
+    public void updateCartItem(CartItem item, int pos) {
+        cartItems.set(pos, item);
         notifyDataSetChanged();
 
         // update item into sharedPreference
-        SharedPreferences.Editor editor=context.getSharedPreferences(context.getString(R.string.cart_sharePrefrance), MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = context.getSharedPreferences(context.getString(R.string.cart_sharePrefrance), MODE_PRIVATE).edit();
 
         // price saves in cent (قرش ) inside sharedPreferences
-        editor.putFloat("price_" + pos, (float) item.price*100);
+        editor.putFloat("price_" + pos, (float) item.price * 100);
         // pricePerUnit is cent (بالقرش)
         editor.putFloat("pricePerUnit_" + pos, (float) (item.type.equals("صنف اول") ? item.vegetableItem.priceFirst : item.vegetableItem.priceSuper));
         editor.putString("type_" + pos, item.type);

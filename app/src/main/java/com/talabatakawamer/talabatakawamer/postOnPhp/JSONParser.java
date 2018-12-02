@@ -43,8 +43,8 @@ public class JSONParser {
                 URL Url = new URL(url);
 
                 HttpURLConnection conn = (HttpURLConnection) Url.openConnection();
-                conn.setReadTimeout(15000);
-                conn.setConnectTimeout(15000);
+                conn.setReadTimeout(4000);
+                conn.setConnectTimeout(4000);
                 conn.setRequestMethod(method);
                 conn.setDoInput(true);
                 conn.setDoOutput(true);

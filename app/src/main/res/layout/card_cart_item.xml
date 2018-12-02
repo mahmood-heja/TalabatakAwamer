@@ -99,16 +99,27 @@
             android:textSize="12sp" />
 
 
+        <TextView
+            android:id="@+id/packaging"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/option_btn"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/urw_geometric_arabic_bold"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="تغليف"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14sp" />
 
 
 
         <ImageButton
             android:id="@+id/option_btn"
-            android:layout_width="60dp"
+            android:layout_width="40dp"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
             android:scaleType="center"
             android:src="@drawable/ic_more_horiz"
             tools:ignore="ContentDescription" />

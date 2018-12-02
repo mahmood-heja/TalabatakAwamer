@@ -6,7 +6,7 @@
         android:id="@+id/finalBill_menu"
         android:icon="@drawable/ic_final_bill"
         android:title="الفاتورة النهائية"
-        app:showAsAction="always" />
+        app:showAsAction="withText" />
 
 
 </menu>

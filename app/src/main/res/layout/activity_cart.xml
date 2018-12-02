@@ -29,9 +29,26 @@
 
     </android.support.v7.widget.Toolbar>
 
+
+    <TextView
+        android:id="@+id/packagingPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:fontFamily="@font/urw_geometric_arabic_bold"
+        android:gravity="center"
+        android:padding="4dp"
+        android:text="قيمة التغليف  : "
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/totalPrice"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:ignore="HardcodedText" />
+
     <TextView
         android:id="@+id/totalPrice"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:fontFamily="@font/urw_geometric_arabic_bold"
@@ -39,9 +56,9 @@
         android:padding="4dp"
         android:text="قيمة الفاتورة  : "
         android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@id/packagingPrice"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         tools:ignore="HardcodedText" />
 
@@ -53,7 +70,7 @@
         android:fontFamily="@font/urw_geometric_arabic_bold"
         android:gravity="center"
         android:padding="2dp"
-        android:text="يضاف دينار واحد قيمة التوصيل إلى كافة مناطق محافظة إربد"
+        android:text="يضاف دينار واحد قيمة التوصيل داخل مدينة إربد\n التغليف 15 قرش للكيلو الواحد"
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -77,10 +94,10 @@
         android:layout_height="wrap_content"
         android:background="@drawable/button_shape_shoping"
         android:fontFamily="@font/urw_geometric_arabic_bold"
+        android:onClick="request_btn"
         android:text="إطلب ألان"
         android:textColor="@color/white"
         android:textSize="18sp"
-        android:onClick="request_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

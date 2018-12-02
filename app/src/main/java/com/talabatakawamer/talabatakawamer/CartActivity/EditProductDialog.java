@@ -256,6 +256,7 @@ public class EditProductDialog extends Dialog implements View.OnClickListener {
             cartItem.price=(cartItem.vegetableItem.priceSuper*cartItem.quantity)/100;
         }
 
+        // updated with total packaging price also
         adapterCartRecycle.updateCartItem(cartItem,posOfItem);
 
         dismiss();

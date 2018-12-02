@@ -11,14 +11,17 @@ public class CartItem {
     public double pricePerUnit;
     public double quantity;
     public String type;
+    //Packaging is false by default
+    public boolean isPackaging;
 
-    public CartItem(VegetableItem vegetableItem, double price, double pricePerUnit, double quantity, String type) {
+    public CartItem(VegetableItem vegetableItem, double price, double pricePerUnit, double quantity, String type,boolean isPackaging) {
 
         this.vegetableItem = vegetableItem;
         this.price = price;
         this.pricePerUnit = pricePerUnit;
         this.quantity = quantity;
         this.type = type;
+        this.isPackaging = isPackaging;
     }
 
 }
