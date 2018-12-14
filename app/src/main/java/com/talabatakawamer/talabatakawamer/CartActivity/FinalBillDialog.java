@@ -4,12 +4,14 @@ package com.talabatakawamer.talabatakawamer.CartActivity;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ProgressBar;
@@ -17,6 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.talabatakawamer.talabatakawamer.R;
+import com.talabatakawamer.talabatakawamer.VegetablesSection.VegetableItem;
+import com.talabatakawamer.talabatakawamer.postOnPhp.NameValuePair;
+import com.talabatakawamer.talabatakawamer.postOnPhp.PhpTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +30,7 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FinalBillDialog extends Dialog {
 
@@ -44,36 +50,49 @@ public class FinalBillDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Objects.requireNonNull(getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         setContentView(R.layout.final_bill_dialog);
 
-        // get  last final by Order ID
-        String orderID =
-                context.getSharedPreferences(context.getString(R.string.notificationPreference), Context.MODE_PRIVATE).
-                        getString(context.getString(R.string.lastFinalBill), "-1");
-
-        totalPrice_tv = findViewById(R.id.totalPrice);
-
-        findViewById(R.id.done_btn).setOnClickListener(v -> dismiss());
-
-        if (orderID.equals("-1")) {
-            findViewById(R.id.noBill_tv).setVisibility(View.VISIBLE);
-            totalPrice_tv.setVisibility(View.GONE);
-            return;
-        }
-
-        ProgressBar progressBar=findViewById(R.id.ProgressBar);
-        progressBar.setVisibility(View.VISIBLE);
 
         recyclerView = findViewById(R.id.bill_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-        List<com.talabatakawamer.talabatakawamer.postOnPhp.NameValuePair> pairs = new ArrayList<>();
+        SharedPreferences preferences = context.getSharedPreferences(context.getString(R.string.notificationPreference), Context.MODE_PRIVATE);
+        // get  last final by Order ID
+        String orderID = preferences.getString(context.getString(R.string.lastFinalBill), "-1");
+        String lastInitialBill = preferences.getString(context.getString(R.string.lastInitialBill_pref), "");
+        double lastInitialBillTotalPrice = preferences.getFloat(context.getString(R.string.lastInitialBillTotalPrice_pref), -1);
 
-        pairs.add(new com.talabatakawamer.talabatakawamer.postOnPhp.NameValuePair("id", orderID));
 
-        com.talabatakawamer.talabatakawamer.postOnPhp.PhpTask php = new com.talabatakawamer.talabatakawamer.postOnPhp.PhpTask(pairs);
+        totalPrice_tv = findViewById(R.id.totalPrice);
+        TextView title = findViewById(R.id.title);
+
+        findViewById(R.id.done_btn).setOnClickListener(v -> dismiss());
+
+        // first check to know if has final bill or initialBill or  not yet
+        if (orderID.equals("-1") && lastInitialBill.trim().isEmpty()) {
+            findViewById(R.id.noBill_tv).setVisibility(View.VISIBLE);
+            totalPrice_tv.setVisibility(View.GONE);
+            return;
+        } else if (!lastInitialBill.isEmpty() && orderID.equals("-1")) {
+            //have just initial Bill and no final bill yet so show initial Bill
+            title.setText("الفاتورة الابتدائية لأخر طلب لديك");
+            loadDataIntoAdapter(lastInitialBill, lastInitialBillTotalPrice);
+            return;
+        }
+
+        //if final bill is exist remove last initial Bill
+        preferences.edit().remove(context.getString(R.string.lastInitialBill_pref)).apply();
+
+        ProgressBar progressBar = findViewById(R.id.ProgressBar);
+        progressBar.setVisibility(View.VISIBLE);
+
+        List<NameValuePair> pairs = new ArrayList<>();
+
+        pairs.add(new NameValuePair("id", orderID));
+
+        PhpTask php = new PhpTask(pairs);
 
         php.execute("http://talabatakawamer.com/TalabatakAwamerApp/VegetableSection/getFinalBill.php");
 
@@ -82,7 +101,7 @@ public class FinalBillDialog extends Dialog {
 
             if (result != null) {
                 if (!result.getBoolean("error"))
-                    loadDataIntoAdapter(result.getString("final Bill"),result.getDouble("total price"));
+                    loadDataIntoAdapter(result.getString("final Bill"), result.getDouble("total price"));
                 else
                     Toast.makeText(getContext(), result.getString("msg_error"), Toast.LENGTH_LONG).show();
             } else {
@@ -96,7 +115,7 @@ public class FinalBillDialog extends Dialog {
 
 
     @SuppressLint("SetTextI18n")
-    private void loadDataIntoAdapter(String finalBill,double totalPrice) {
+    private void loadDataIntoAdapter(String finalBill, double totalPrice) {
         try {
 
             JSONArray jsonArray = new JSONArray(finalBill);
@@ -109,16 +128,19 @@ public class FinalBillDialog extends Dialog {
 
                 // fill need information to show
                 // 0  mean no need for this failed
-                com.talabatakawamer.talabatakawamer.VegetablesSection.VegetableItem item = new com.talabatakawamer.talabatakawamer.VegetablesSection.VegetableItem(
+                VegetableItem item = new VegetableItem(
                         object.getInt("id"), object.getString("name"),
                         "", object.getString("image"), 0, 0,
                         object.getInt("quantityType"), 0);
 
                 double price = object.getDouble("price");
 
-                // isPackaging value is not required here
-                CartItem cartItem = new CartItem(item, price, 0,
-                        object.getDouble("quantity"), object.getString("type"),false);
+                boolean isPackaging = false;
+                if (object.has("isPackaging"))
+                    isPackaging = object.getBoolean("isPackaging");
+
+                CartItem cartItem = new CartItem(item, price, 0, object.getDouble("quantity"),
+                        object.getString("type"), isPackaging);
 
                 items.add(cartItem);
             }

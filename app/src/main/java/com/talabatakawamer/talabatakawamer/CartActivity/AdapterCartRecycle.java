@@ -81,37 +81,42 @@ public class AdapterCartRecycle extends RecyclerView.Adapter<AdapterCartRecycle.
                     return false;
                 });
             });
-        else {
+        else
             holder.option_btn.setVisibility(View.GONE);
-            holder.packaging_tv.setVisibility(View.GONE);
-        }
+
 
         if (item.isPackaging) {
-            holder.packaging_tv.setText("إلغاء التغليف");
+            holder.packaging_tv.setText(canItemEdit?"إلغاء التغليف":"مغلف");
             holder.packaging_tv.setTextColor(context.getResources().getColor(R.color.colorAccent));
+            holder.packaging_tv.setVisibility(View.VISIBLE);
 
         } else {
             holder.packaging_tv.setText("تغليف");
             holder.packaging_tv.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+            if (!canItemEdit)
+                holder.packaging_tv.setVisibility(View.GONE);
+
         }
 
-        holder.packaging_tv.setOnClickListener(v -> {
-            if (!item.isPackaging) {
-                holder.packaging_tv.setText("إلغاء التغليف");
-                holder.packaging_tv.setTextColor(context.getResources().getColor(R.color.colorAccent));
-                context.updatePackagingPrice(item.quantity * 0.15);
-            } else {
-                holder.packaging_tv.setText("تغليف");
-                holder.packaging_tv.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
-                context.updatePackagingPrice(-item.quantity * 0.15);
+        // false when adapter use in final bill dialog
+        if (canItemEdit)
+            holder.packaging_tv.setOnClickListener(v -> {
+                if (!item.isPackaging) {
+                    holder.packaging_tv.setText("إلغاء التغليف");
+                    holder.packaging_tv.setTextColor(context.getResources().getColor(R.color.colorAccent));
+                    context.updatePackagingPrice(item.quantity * 0.15);
+                } else {
+                    holder.packaging_tv.setText("تغليف");
+                    holder.packaging_tv.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+                    context.updatePackagingPrice(-item.quantity * 0.15);
 
-            }
+                }
 
-            //update value of item
-            context.getSharedPreferences(context.getString(R.string.cart_sharePrefrance),MODE_PRIVATE).edit().putBoolean("packaging_" + position,!item.isPackaging).apply();
-            item.isPackaging = !item.isPackaging;
+                //update value of item
+                context.getSharedPreferences(context.getString(R.string.cart_sharePrefrance), MODE_PRIVATE).edit().putBoolean("packaging_" + position, !item.isPackaging).apply();
+                item.isPackaging = !item.isPackaging;
 
-        });
+            });
 
     }
 
@@ -141,7 +146,7 @@ public class AdapterCartRecycle extends RecyclerView.Adapter<AdapterCartRecycle.
                         double price_ = preferences.getFloat("price_" + (i + 1), 0);
                         String type_ = preferences.getString("type_" + (i + 1), "");
                         float quantity_ = preferences.getFloat("quantity_" + (i + 1), 0);
-                        boolean isPackaging_=preferences.getBoolean("packaging_" + (i + 1),false);
+                        boolean isPackaging_ = preferences.getBoolean("packaging_" + (i + 1), false);
 
 
                         //save product  (position +1) in right position
@@ -149,7 +154,7 @@ public class AdapterCartRecycle extends RecyclerView.Adapter<AdapterCartRecycle.
                         editor.putFloat("price_" + i, (float) price_);
                         editor.putString("type_" + i, type_);
                         editor.putFloat("quantity_" + i, quantity_);
-                        editor.putBoolean("packaging_" + i,isPackaging_);
+                        editor.putBoolean("packaging_" + i, isPackaging_);
 
                     }
 

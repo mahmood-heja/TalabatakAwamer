@@ -1,6 +1,7 @@
 package com.talabatakawamer.talabatakawamer.VegetablesSection;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -10,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -22,8 +24,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +39,6 @@ import com.talabatakawamer.talabatakawamer.CartActivity.CartActivity;
 import com.talabatakawamer.talabatakawamer.R;
 import com.talabatakawamer.talabatakawamer.postOnPhp.NameValuePair;
 import com.talabatakawamer.talabatakawamer.postOnPhp.PhpTask;
-import com.kaopiz.kprogresshud.KProgressHUD;
 import com.readystatesoftware.viewbadger.BadgeView;
 import com.stepstone.apprating.AppRatingDialog;
 import com.stepstone.apprating.listener.RatingDialogListener;
@@ -45,6 +49,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static android.Manifest.permission.CALL_PHONE;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -65,8 +70,8 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
 
     private void setSplashLayout(boolean show) {
 
-        FrameLayout splashLayout=findViewById(R.id.splashLayout);
-        ImageView imageSplash=findViewById(R.id.imageSplash);
+        FrameLayout splashLayout = findViewById(R.id.splashLayout);
+        ImageView imageSplash = findViewById(R.id.imageSplash);
 
         if (show) {
             mWaveDrawable = new WaveDrawable(getResources().getDrawable(R.drawable.logo));
@@ -78,12 +83,14 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
             imageSplash.setImageDrawable(mWaveDrawable);
         } else {
 
-            if(splashLayout.getVisibility()==View.VISIBLE)
-            YoYo.with(Techniques.SlideOutDown).delay(1000).onEnd(animator -> {
-                mWaveDrawable.stop();
-                imageSplash.setVisibility(View.GONE);
-                splashLayout.setVisibility(View.GONE);
-            }).playOn(splashLayout);
+            if (splashLayout.getVisibility() == View.VISIBLE)
+                YoYo.with(Techniques.SlideOutDown).delay(1000).onEnd(animator -> {
+                    mWaveDrawable.stop();
+                    imageSplash.setVisibility(View.GONE);
+                    splashLayout.setVisibility(View.GONE);
+
+                    showImage();
+                }).playOn(splashLayout);
 
 
         }
@@ -201,7 +208,6 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
                 .create().show();
 
     }
-
 
     private void loadProduct() {
         noConn_iv.setVisibility(View.GONE);
@@ -423,6 +429,27 @@ public class VegetablesActivity extends AppCompatActivity implements RatingDialo
                 .create(this)
                 .show();
 
+    }
+
+    public void showImage() {
+
+        boolean firstShow = getPreferences(MODE_PRIVATE).getBoolean("ShowImageDialog", true);
+        if (!firstShow)
+            return;
+        else
+            getPreferences(MODE_PRIVATE).edit().putBoolean("ShowImageDialog", false).apply();
+
+        Dialog builder = new Dialog(this);
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Objects.requireNonNull(builder.getWindow()).setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        ImageView imageView = new ImageView(this);
+        imageView.setImageResource(R.drawable.tb);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        builder.addContentView(imageView, new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        builder.show();
     }
 
     @Override

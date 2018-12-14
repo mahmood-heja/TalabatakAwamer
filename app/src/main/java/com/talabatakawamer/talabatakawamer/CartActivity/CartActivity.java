@@ -2,12 +2,14 @@ package com.talabatakawamer.talabatakawamer.CartActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,9 +33,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Time;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,6 +63,8 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
         // title added from layout
+
+
         setTitle("");
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -119,31 +125,25 @@ public class CartActivity extends AppCompatActivity {
 
     }
 
+
     public void request_btn(View view) {
 
         DecimalFormat df = new DecimalFormat("#.###");
         //total = total of packaging + total of product in JD + 1.0 JD for deliver
         double total = (totalPrice / 100.0) + packagingPrice + 1;
         if (totalPrice != 0) {
-            new LovelyTextInputDialog(this)
-                    .setTopColorRes(R.color.colorAccent)
-                    // 1.0 JD price of deliver
-                    .setTitle("المجموع الكلي :" + df.format(total) + " دينار ")
-                    .setMessage("أدخل رقم هاتفك من اجل التواصل")
-                    .setIcon(R.drawable.ic_shooping_smartphone)
-                    // return text.length() == 10
-                    .setInputFilter("ادخل رقم هاتف صالح", text -> text.length() == 10 && text.startsWith("07"))
-                    // # this::sentOrder =   #text -> sentOrder(text)
-                    .setConfirmButton("إطلب", this::sentOrder)
-                    .setNegativeButton("إلغاء", null)
-                    .setInputType(EditorInfo.TYPE_CLASS_PHONE)
+
+            new TimeDeliverIntervalDialog(this)
+                    .setMeesage("المجموع الكلي :" + df.format(total) + " دينار ")
+                    .setConfirmButton((interval, phoneNum) -> sentOrder(phoneNum, interval))
                     .show();
+
         } else
             Toast.makeText(this, "لا يوجد طلبات داخل السلة", Toast.LENGTH_LONG).show();
 
     }
 
-    private void sentOrder(String phone_num) {
+    private void sentOrder(String phone_num, String deliverTime) {
         progress = KProgressHUD.create(this)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setCancellable(false)
@@ -163,6 +163,7 @@ public class CartActivity extends AppCompatActivity {
 
         pairs.add(new NameValuePair("phone_info", phone_num));
         pairs.add(new NameValuePair("info", infoJsonArray.toString()));
+        pairs.add(new NameValuePair("deliverTime", deliverTime));
         // add one JD price of deliver
         // rotate price to first 3 digit in EN Number
         DecimalFormat df = new DecimalFormat("#.###", DecimalFormatSymbols.getInstance(new Locale("en", "US")));
@@ -178,8 +179,14 @@ public class CartActivity extends AppCompatActivity {
 
             if (result != null) {
                 if (!result.getBoolean("error")) {
+                    //save the initial bill
+                    SharedPreferences preferences = getSharedPreferences(getString(R.string.notificationPreference), Context.MODE_PRIVATE);
+                    preferences.edit().putString(getString(R.string.lastInitialBill_pref), infoJsonArray.toString()).apply();
+                    preferences.edit().putFloat(getString(R.string.lastInitialBillTotalPrice_pref), (float) total).apply();
                     // send notification to admin
                     sendNotify(phone_num);
+
+
                     // stop method
                     return;
                 } else
@@ -260,7 +267,9 @@ public class CartActivity extends AppCompatActivity {
                 itemObject.put("pricePerUnit", item.pricePerUnit);
                 //Packaging of product states
                 // if true the price of packaging is added to total price and not to price of product
-                itemObject.put("isPackaging",item.isPackaging);
+                // Packaging Price in JD
+                itemObject.put("isPackaging", item.isPackaging);
+                itemObject.put("PackagingPrice", item.quantity * 0.15);
 
 
                 jsonArray.put(itemObject);

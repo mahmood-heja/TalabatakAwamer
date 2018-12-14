@@ -167,7 +167,8 @@
             android:background="@drawable/button_shape_shoping"
             android:padding="4dp"
             android:drawableEnd="@drawable/ic_add_shopping"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            android:drawableRight="@drawable/ic_add_shopping" />
 
     </RelativeLayout>
 

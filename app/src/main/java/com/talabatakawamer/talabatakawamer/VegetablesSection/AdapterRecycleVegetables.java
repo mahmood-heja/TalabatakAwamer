@@ -406,12 +406,15 @@ public class AdapterRecycleVegetables extends RecyclerView.Adapter<AdapterRecycl
                 double price_ = prefs.getFloat("price_" + (i + 1), 0);
                 String type_ = prefs.getString("type_" + (i + 1), "");
                 float quantity_ = prefs.getFloat("quantity_" + (i + 1), 0);
+                boolean isPackaging=prefs.getBoolean("packaging_" + (i + 1), false);
+
 
                 //save product  (position +1) in right position
                 editor.putString("product_" + i, product_);
                 editor.putFloat("price_" + i, (float) price_);
                 editor.putString("type_" + i, type_);
                 editor.putFloat("quantity_" + i, quantity_);
+                editor.putBoolean("packaging_" + i, isPackaging);
 
                 reachedProductOrder = true;
             }
@@ -424,6 +427,7 @@ public class AdapterRecycleVegetables extends RecyclerView.Adapter<AdapterRecycl
         editor.remove("price_" + (number - 1));
         editor.remove("type_" + (number - 1));
         editor.remove("quantity_" + (number - 1));
+        editor.remove("packaging_" + (number - 1));
         //delete  id  item is add to card in recycle
         editor.remove(item.id + "_inCard");
 

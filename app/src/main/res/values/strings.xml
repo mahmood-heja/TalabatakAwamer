@@ -11,6 +11,8 @@
     <string name="orderId">orderId</string>
     <string name="phoneNumber">phoneNumber</string>
     <string name="showRating">must Show Rating Dialog</string>
+    <string name="lastInitialBill_pref">lastInitialBill</string>
+    <string name="lastInitialBillTotalPrice_pref">last Initial Bill Total Price</string>
 
     <array name="gram_spinner">
         <item>ربع كيلو</item>
